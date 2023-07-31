@@ -101,10 +101,14 @@ class Client:
         after: str | None = None,
         fields: list[Field] | None = None,
     ):
+        params = {}
+
         filter_string = self._render_filters(
             itertools.chain(filters, self._resolve_owners(filters))
         )
-        params = {"filter": filter_string}
+
+        if filter_string:
+            params["filter"] = filter_string
 
         if limit is not None:
             params["limit"] = limit
@@ -117,4 +121,3 @@ class Client:
 
         for entity in self._get_entities(params):
             yield Entity.model_validate(entity)
-
