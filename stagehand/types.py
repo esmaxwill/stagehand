@@ -48,7 +48,7 @@ class EntityReference(pydantic.BaseModel):
 
     def __str__(self) -> str:
         """Get the string representation of the reference"""
-        return self.format(self.kind, self.namespace, self.name)
+        return self.format(self.kind, self.namespace, self.name).lower()
 
     def __eq__(self, __value: object) -> bool:
         return __value == str(self)

@@ -63,4 +63,4 @@ class Entity(pydantic.BaseModel):
     def entity_reference(self) -> types.EntityReference:
         return types.EntityReference.format(
             self.kind, self.metadata.namespace, self.metadata.name
-        )
+        ).lower()

@@ -33,3 +33,4 @@ def test_parsing():
     assert "portal" in entity.tags
     assert "github.com/hello" in entity.labels
     assert entity.labels["github.com/hello"] == "world"
+    assert entity.entity_reference == "system:default/artist-engagement-portal"

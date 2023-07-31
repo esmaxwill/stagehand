@@ -2,9 +2,13 @@ import abc
 import httpx
 import itertools
 import typing
+import urllib.parse
+
 
 from stagehand.types import EntityReference
 from stagehand.models import Entity
+
+from devtools import debug
 
 
 class FilterBase(abc.ABC):
@@ -76,11 +80,22 @@ class Client:
     def _render_filters(self, filters: list[FilterBase]) -> str:
         return ",".join([x.render() for x in filters if isinstance(x, Filter)])
 
-    def _get_entities(self, params):
-        response = httpx.get(
-            f"{self.backstage_url}/api/catalog/entities", params=params
-        )
-        return response.json()
+    def _get_entities(self, params) -> typing.Generator[Entity, None, None]:
+        session = httpx.Client()
+        url = f"{self.backstage_url}/api/catalog/entities"
+
+        while True:
+            response = session.get(url, params=params)
+            response.raise_for_status()
+
+            yield from response.json()
+
+            if not response.links:
+                break
+
+            next = urllib.parse.urlparse(response.links["next"]["url"])
+            next_params = urllib.parse.parse_qs(next.query)
+            params.update(next_params)
 
     def entity(self, reference: str | EntityReference) -> Entity:
         entity = (
