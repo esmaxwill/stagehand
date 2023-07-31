@@ -1,7 +1,5 @@
 import re
 
-from devtools import debug
-
 _label_value_regex = re.compile(r"^[a-z0-9A-Z\.\-_:]{1,63}$")
 _label_value_default = {"prefix": None, "name": None}
 _label_key = re.compile(
@@ -42,7 +40,6 @@ def validate_label_value(v: str) -> str:
 
 
 def validate_tag_value(v: str) -> str:
-    debug(v)
     assert re.match(
         r"[a-z0-9:+#\-]{1,63}", v
     ), "Tag value doesn't match documented pattern"

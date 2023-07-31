@@ -2,8 +2,6 @@ import pydantic
 
 from . import types
 
-from devtools import debug
-
 
 class Relationship(pydantic.BaseModel):
     model_config = pydantic.ConfigDict(extra="allow")

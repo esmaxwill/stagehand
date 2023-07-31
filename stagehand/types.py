@@ -1,4 +1,3 @@
-import functools
 import typing
 from typing_extensions import Annotated
 
@@ -6,9 +5,6 @@ import pydantic
 import pydantic_core
 
 from . import validators
-
-from devtools import debug
-
 
 Name = Annotated[
     pydantic.constr(
