@@ -21,7 +21,9 @@ class Fields(FilterBase):
         self.fields: list[str] = [fields] if isinstance(fields, str) else fields
 
     def render(self) -> str:
-        return ",".join(self.fields)
+        return ",".join(
+            itertools.chain(["apiVersion", "spec", "metadata"], self.fields)
+        )
 
 
 class Filter(FilterBase):
