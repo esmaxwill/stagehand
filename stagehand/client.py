@@ -3,8 +3,8 @@ import httpx
 import itertools
 import typing
 
-from .types import EntityReference
-from .models import Entity
+from stagehand.types import EntityReference
+from stagehand.models import Entity
 
 
 class FilterBase(abc.ABC):

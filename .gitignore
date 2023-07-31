@@ -2,3 +2,4 @@ node_modules/
 .pytest_cache
 htmlcov
 .coverage
+test.py
