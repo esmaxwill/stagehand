@@ -16,9 +16,12 @@ class FilterBase(abc.ABC):
         return hash(self.render())
 
 
-class Field:
-    def __init__(self, path: str) -> None:
-        self.path: str = path
+class Fields(FilterBase):
+    def __init__(self, fields: str | list[str]) -> None:
+        self.fields: list[str] = [fields] if isinstance(fields, str) else fields
+
+    def render(self) -> str:
+        return ",".join(self.fields)
 
 
 class Filter(FilterBase):
@@ -85,7 +88,7 @@ class Client:
         )
 
         response = httpx.get(
-            f"{self.backstage_url}/api/catalog/entities/by-name/{entity.kind}/{entity.namespace}/{entity.name}"
+            f"{self.backstage_url}/api/catalog/entities/by-name/{entity.kind}/{entity.namespace or 'default'}/{entity.name}"
         )
         return Entity.model_validate(response.json())
 
@@ -95,7 +98,7 @@ class Client:
         offset: int | None = None,
         limit: int | None = None,
         after: str | None = None,
-        fields: list[Field] | None = None,
+        fields: Fields | None = None,
     ) -> typing.Generator[Entity, None, None]:
         params = {}
 
@@ -114,6 +117,9 @@ class Client:
 
         if after is not None:
             params["after"] = after
+
+        if fields is not None:
+            params["fields"] = fields.render()
 
         for entity in self._get_entities(params):
             yield Entity.model_validate(entity)
