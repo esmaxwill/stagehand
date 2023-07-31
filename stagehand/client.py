@@ -1,6 +1,7 @@
 import abc
 import httpx
 import itertools
+import typing
 
 from .types import EntityReference
 from .models import Entity
@@ -57,7 +58,6 @@ class Client:
         self.backstage_url = backstage_url
 
     def _resolve_owners(self, filters: list[FilterBase]) -> str:
-        owners = []
         for owner in [x for x in filters if isinstance(x, Owner)]:
             yield Owner(reference=str(owner.reference), recursive=False).render()
 
@@ -96,7 +96,7 @@ class Client:
         limit: int | None = None,
         after: str | None = None,
         fields: list[Field] | None = None,
-    ):
+    ) -> typing.Generator[Entity, None, None]:
         params = {}
 
         filter_string = self._render_filters(
