@@ -21,8 +21,8 @@ TagValue = Annotated[str, pydantic.AfterValidator(validators.validate_tag_value)
 
 
 class EntityReference(pydantic.BaseModel):
-    kind: Name | None = None
     name: Name
+    kind: Name | None = None
     namespace: Name | None = None
 
     @classmethod
