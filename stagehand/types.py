@@ -6,18 +6,21 @@ import pydantic_core
 
 from . import validators
 
-Name = Annotated[
-    pydantic.constr(
-        min_length=1,
-        max_length=63,
-        strip_whitespace=False,
-        strict=True,
-        pattern=r"^[a-zA-Z\.\-_0-9]+$",
-    ),
-    pydantic.AfterValidator(validators.validate_label_value),
-]
-LabelValue = Annotated[str, pydantic.AfterValidator(validators.validate_label_value)]
-TagValue = Annotated[str, pydantic.AfterValidator(validators.validate_tag_value)]
+# Name = Annotated[
+Name = pydantic.constr(
+    min_length=1,
+    max_length=63,
+    strip_whitespace=False,
+    strict=True,
+    pattern=r"^[a-z0-9A-Z\.\-_:]+$",
+)
+
+LabelValue = pydantic.constr(
+    strict=True, strip_whitespace=False, pattern=r"^[a-z0-9A-Z\.\-_:]{1,63}$"
+)
+TagValue = pydantic.constr(
+    strict=True, strip_whitespace=False, pattern=r"[a-z0-9:+#\-]{1,63}"
+)
 
 
 class EntityReference(pydantic.BaseModel):
@@ -67,7 +70,7 @@ class LabelName(pydantic.BaseModel):
         cls, source_type: typing.Any, handler: pydantic.GetCoreSchemaHandler
     ) -> pydantic_core.CoreSchema:
         return pydantic_core.core_schema.no_info_before_validator_function(
-            function=validators.validate_label, schema=handler(cls)
+            function=validators.parse_label, schema=handler(cls)
         )
 
     def __str__(self) -> str:
